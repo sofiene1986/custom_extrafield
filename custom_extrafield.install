@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * implements hook_schema
+ */
+function custom_extrafield_schema() {
+  $schema = array();
+  $schema ['custom_extrafield'] = array(
+      'fields' => array(
+          'eid' => array(
+              'description' => 'The primary identifier for a node.',
+              'type' => 'serial',
+              'unsigned' => TRUE,
+              'not null' => TRUE
+          ),
+          'entity_type' => array(
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => TRUE
+          ),
+          'bundle' => array(
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => TRUE
+          ),
+          'name' => array(
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => TRUE
+          ),
+          'data' => array(
+              'type' => 'blob',
+              'not null' => FALSE,
+              'size' => 'big',
+              'serialize' => TRUE
+          ),
+          'class' => array(
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE
+          ),
+          'tag' => array(
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE
+          ),
+          'is_php' => array(
+              'type' => 'int',
+              'not null' => FALSE,
+              'default' => 0,
+          )
+      ),
+      'primary key' => array(
+          'eid'
+      )
+  );
+  return $schema;
+}
+
+/**
+ * implements hook_schema
+ */
+function custom_extrafield_uninstall() {
+  if (db_table_exists('custom_extrafield')) {
+    db_drop_table('custom_extrafield');
+  }
+}
