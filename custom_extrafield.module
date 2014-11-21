@@ -4,11 +4,11 @@
  * implements hook_permission
  */
 function custom_extrafield_permission() {
-  return array( 
-      'administer custom_extrafield' => array( 
+  return array(
+      'administer custom_extrafield' => array(
           'title' => t ( 'administer custom_extrafield' ),
-          'description' => t ( 'administer custom_extrafield' ) 
-      ) 
+          'description' => t ( 'administer custom_extrafield' )
+      )
   );
 }
 
@@ -27,61 +27,61 @@ function custom_extrafield_load($eid) {
  */
 function custom_extrafield_menu() {
   $items = array();
-  $items ['admin/config/custom-extrafield/%custom_extrafield'] = array( 
+  $items ['admin/config/custom-extrafield/%custom_extrafield'] = array(
       'page callback' => 'drupal_get_form',
-      'page arguments' => array( 
+      'page arguments' => array(
           'custom_extrafield_settings',
-          3 
+          3
       ),
-      'access arguments' => array( 
-          'administer custom_extrafield' 
+      'access arguments' => array(
+          'administer custom_extrafield'
       ),
       'title callback' => 'title_edit_extra',
-      'title arguments' => array( 
-          3 
+      'title arguments' => array(
+          3
       ),
-      'type' => MENU_NORMAL_ITEM 
+      'type' => MENU_CALLBACK
   );
-  $items ['admin/config/custom-extrafield/%custom_extrafield/delete'] = array( 
+  $items ['admin/config/custom-extrafield/%custom_extrafield/delete'] = array(
       'page callback' => 'drupal_get_form',
-      'page arguments' => array( 
+      'page arguments' => array(
           'custom_extrafield_settings_delete',
-          3 
+          3
       ),
-      'access arguments' => array( 
-          'administer custom_extrafield' 
+      'access arguments' => array(
+          'administer custom_extrafield'
       ),
       'title' => 'Supprimer l\'extrafield',
-      'type' => MENU_NORMAL_ITEM 
+      'type' => MENU_CALLBACK
   );
   return $items;
 }
 function title_edit_extra($extra) {
-  return t ( 'Modifier l\'extrafield @name', array( 
-      '@name' => $extra->name 
+  return t ( 'Modifier l\'extrafield @name', array(
+      '@name' => $extra->name
   ) );
 }
 /**
  * formualire de confirmation de la suppression d'extrafield
  */
 function custom_extrafield_settings_delete($form, $form_state, $extra) {
-  $form ['markup'] = array( 
+  $form ['markup'] = array(
       '#type' => 'markup',
-      '#markup' => '<div>' . t ( 'Etes vous sûr de bien vouloir supprimer l\'extrafield "<strong>@extra</strong>"<div>', array( 
-          '@extra' => $extra->name 
-      ) ) 
+      '#markup' => '<div>' . t ( 'Etes vous sûr de bien vouloir supprimer l\'extrafield "<strong>@extra</strong>"<div>', array(
+          '@extra' => $extra->name
+      ) )
   );
-  $form ['eid'] = array( 
+  $form ['eid'] = array(
       '#type' => 'value',
-      '#value' => $extra->eid 
+      '#value' => $extra->eid
   );
-  $form ['extra'] = array( 
+  $form ['extra'] = array(
       '#type' => 'value',
-      '#value' => $extra->name 
+      '#value' => $extra->name
   );
-  $form ['submit'] = array( 
+  $form ['submit'] = array(
       '#type' => 'submit',
-      '#value' => 'Supprimer' 
+      '#value' => 'Supprimer'
   );
   $form ['#submit'] [] = 'custom_extrafield_delete';
   return $form;
@@ -95,8 +95,8 @@ function custom_extrafield_delete($form, $form_state) {
   $query = db_delete ( 'custom_extrafield' );
   $query->condition ( 'eid', $eid );
   $query->execute ();
-  drupal_set_message ( t ( '"@extra" supprimer', array( 
-      '@extra' => $form_state ['values'] ['extra'] 
+  drupal_set_message ( t ( '"@extra" supprimer', array(
+      '@extra' => $form_state ['values'] ['extra']
   ) ) );
   field_info_cache_clear ();
 }
@@ -105,49 +105,49 @@ function custom_extrafield_delete($form, $form_state) {
  * formulaire d'édition d'un extrafield
  */
 function custom_extrafield_settings($form, $form_state, $extra) {
-  $form ['fieldset_extrafield'] = array( 
+  $form ['fieldset_extrafield'] = array(
       '#type' => 'fieldset',
       '#title' => t ( 'Modifier l\'extrafield' ),
       '#collapsible' => TRUE,
-      '#collapsed' => FALSE 
+      '#collapsed' => FALSE
   );
-  $form ['fieldset_extrafield'] ['name'] = array( 
+  $form ['fieldset_extrafield'] ['name'] = array(
       '#type' => 'textfield',
       '#default_value' => $extra->name,
       '#title' => t ( 'Nom' ),
-      '#required' => TRUE 
+      '#required' => TRUE
   );
-  $form ['fieldset_extrafield'] ['is_php'] = array( 
+  $form ['fieldset_extrafield'] ['is_php'] = array(
       '#type' => 'checkbox',
       '#default_value' => $extra->is_php,
       '#title' => t ( 'PHP' ),
-      '#description' => t ( 'Cochez cette case si vous voulez utilisé du code php ( ne pas utilisez les balises php <?php ?>)' ) 
+      '#description' => t ( 'Cochez cette case si vous voulez utilisé du code php ( ne pas utilisez les balises php <?php ?>)' )
   );
-  $form ['fieldset_extrafield'] ['data'] = array( 
+  $form ['fieldset_extrafield'] ['data'] = array(
       '#type' => 'textarea',
       '#default_value' => unserialize ( $extra->data ),
       '#title' => t ( 'Valeur' ),
-      '#description' => t ( 'Variable php disponible : $@type (exemple: return $@type->title;)', array( 
-          '@type' => $extra->entity_type 
-      ) ) 
+      '#description' => t ( 'Variable php disponible : $@type (exemple: return $@type->title;)', array(
+          '@type' => $extra->entity_type
+      ) )
   );
-  
-  $form ['fieldset_extrafield'] ['entity_type'] = array( 
+
+  $form ['fieldset_extrafield'] ['entity_type'] = array(
       '#type' => 'hidden',
-      '#value' => $extra->entity_type 
+      '#value' => $extra->entity_type
   );
-  $form ['fieldset_extrafield'] ['bundle'] = array( 
+  $form ['fieldset_extrafield'] ['bundle'] = array(
       '#type' => 'hidden',
-      '#value' => $extra->bundle 
+      '#value' => $extra->bundle
   );
-  $form ['fieldset_extrafield'] ['class'] = array( 
+  $form ['fieldset_extrafield'] ['class'] = array(
       '#type' => 'textfield',
       '#default_value' => $extra->class,
-      '#title' => t ( 'Class' ) 
+      '#title' => t ( 'Class' )
   );
-  $form ['fieldset_extrafield'] ['tag'] = array( 
+  $form ['fieldset_extrafield'] ['tag'] = array(
       '#type' => 'select',
-      '#options' => array( 
+      '#options' => array(
           'span' => 'SPAN',
           'div' => 'DIV',
           'strong' => 'STRONG',
@@ -155,27 +155,27 @@ function custom_extrafield_settings($form, $form_state, $extra) {
           'h3' => 'H3',
           'h4' => 'H4',
           'h5' => 'H5',
-          'h6' => 'H6' 
+          'h6' => 'H6'
       ),
       '#title' => t ( 'Tag' ),
-      '#default_value' => $extra->tag 
+      '#default_value' => $extra->tag
   );
-  $form ['fieldset_extrafield'] ['eid'] = array( 
+  $form ['fieldset_extrafield'] ['eid'] = array(
       '#type' => 'hidden',
-      '#value' => $extra->eid 
+      '#value' => $extra->eid
   );
-  $form ['token'] = array( 
+  $form ['token'] = array(
       '#theme' => 'token_tree',
-      '#token_types' => array( 
-          $extra->entity_type 
+      '#token_types' => array(
+          $extra->entity_type
       ),
       '#global_types' => TRUE,
       '#click_insert' => TRUE,
-      '#modal' => TRUE 
+      '#modal' => TRUE
   );
-  $form ['submit'] = array( 
+  $form ['submit'] = array(
       '#type' => 'submit',
-      '#value' => 'Mettre à jour' 
+      '#value' => 'Mettre à jour'
   );
   $form ['#attached'] ['js'] [] = drupal_get_path ( 'module', 'custom_extrafield' ) . '/lib/edit_area_full.js';
   $form ['#attached'] ['js'] [] = drupal_get_path ( 'module', 'custom_extrafield' ) . '/js/script.js';
@@ -197,8 +197,8 @@ function custom_extrafield_update($form, $form_state) {
     }
   }
   drupal_write_record ( 'custom_extrafield', $extra, 'eid' );
-  drupal_set_message ( t ( 'Votre extrafield id = "@eid" a été mis à jour', array( 
-      '@eid' => $extra->eid 
+  drupal_set_message ( t ( 'Votre extrafield id = "@eid" a été mis à jour', array(
+      '@eid' => $extra->eid
   ) ) );
   field_info_cache_clear ();
 }
@@ -210,38 +210,38 @@ function custom_extrafield_form_field_ui_display_overview_form_alter(&$form, &$f
   $entity_type = $form ['#entity_type'];
   $bundle = $form ['#bundle'];
   $view_mode = $form ['#view_mode'];
-  
-  $form ['fieldset_extrafield'] = array( 
+
+  $form ['fieldset_extrafield'] = array(
       '#type' => 'fieldset',
       '#title' => t ( 'Nouveau extrafield' ),
       '#collapsible' => TRUE,
-      '#collapsed' => FALSE 
+      '#collapsed' => FALSE
   );
-  $form ['fieldset_extrafield'] ['name'] = array( 
+  $form ['fieldset_extrafield'] ['name'] = array(
       '#type' => 'textfield',
       '#default_value' => '',
-      '#title' => t ( 'Nom' ) 
+      '#title' => t ( 'Nom' )
   );
-  $form ['fieldset_extrafield'] ['bundle'] = array( 
+  $form ['fieldset_extrafield'] ['bundle'] = array(
       '#type' => 'hidden',
-      '#value' => $bundle 
+      '#value' => $bundle
   );
-  $form ['fieldset_extrafield'] ['view_mode'] = array( 
+  $form ['fieldset_extrafield'] ['view_mode'] = array(
       '#type' => 'hidden',
-      '#value' => $view_mode 
+      '#value' => $view_mode
   );
-  $form ['fieldset_extrafield'] ['entity_type'] = array( 
+  $form ['fieldset_extrafield'] ['entity_type'] = array(
       '#type' => 'hidden',
-      '#value' => $entity_type 
+      '#value' => $entity_type
   );
-  $form ['fieldset_extrafield'] ['class'] = array( 
+  $form ['fieldset_extrafield'] ['class'] = array(
       '#type' => 'textfield',
       '#default_value' => '',
-      '#title' => t ( 'Class' ) 
+      '#title' => t ( 'Class' )
   );
-  $form ['fieldset_extrafield'] ['tag'] = array( 
+  $form ['fieldset_extrafield'] ['tag'] = array(
       '#type' => 'select',
-      '#options' => array( 
+      '#options' => array(
           'span' => 'SPAN',
           'div' => 'DIV',
           'strong' => 'STRONG',
@@ -249,33 +249,33 @@ function custom_extrafield_form_field_ui_display_overview_form_alter(&$form, &$f
           'h3' => 'H3',
           'h4' => 'H4',
           'h5' => 'H5',
-          'h6' => 'H6' 
+          'h6' => 'H6'
       ),
       '#default_value' => 'div',
-      '#title' => t ( 'Tag' ) 
+      '#title' => t ( 'Tag' )
   );
-  $form ['fieldset_extrafield'] ['is_php'] = array( 
+  $form ['fieldset_extrafield'] ['is_php'] = array(
       '#type' => 'checkbox',
       '#default_value' => FALSE,
       '#title' => t ( 'PHP' ),
-      '#description' => t ( 'Cochez cette case si vous voulez utilisé du code php ( ne pas utilisez les balises php <?php ?>)' ) 
+      '#description' => t ( 'Cochez cette case si vous voulez utilisé du code php ( ne pas utilisez les balises php <?php ?>)' )
   );
-  $form ['fieldset_extrafield'] ['data'] = array( 
+  $form ['fieldset_extrafield'] ['data'] = array(
       '#type' => 'textarea',
       '#default_value' => '',
       '#title' => t ( 'Valeur' ),
-      '#description' => t ( 'Variable php disponible : $@type (exemple: return $@type->type;)', array( 
-          '@type' => $entity_type 
-      ) ) 
+      '#description' => t ( 'Variable php disponible : $@type (exemple: return $@type->type;)', array(
+          '@type' => $entity_type
+      ) )
   );
-  $form ['fieldset_extrafield'] ['token'] = array( 
+  $form ['fieldset_extrafield'] ['token'] = array(
       '#theme' => 'token_tree',
-      '#token_types' => array( 
-          $entity_type 
+      '#token_types' => array(
+          $entity_type
       ),
       '#global_types' => TRUE,
       '#click_insert' => TRUE,
-      '#modal' => TRUE 
+      '#modal' => TRUE
   );
   $form ['#submit'] [] = 'custom_extrafield_form_submit';
   $form ['#attached'] ['js'] [] = drupal_get_path ( 'module', 'custom_extrafield' ) . '/lib/edit_area_full.js';
@@ -287,16 +287,16 @@ function custom_extrafield_form_field_ui_display_overview_form_alter(&$form, &$f
   $extras = $query->execute ()->fetchAll ();
   if ($extras) {
     foreach ( $extras as $element ) {
-      $form ['fields'] ['custom_extrafield_' . $element->eid] ['settings_summary'] = array( 
-          '#markup' => '<a href="' . url ( 'admin/config/custom-extrafield/' . $element->eid, array( 
-              'query' => array( 
-                  'destination' => current_path () 
-              ) 
-          ) ) . '">Modifier</a> | <a href="' . url ( 'admin/config/custom-extrafield/' . $element->eid . '/delete', array( 
-              'query' => array( 
-                  'destination' => current_path () 
-              ) 
-          ) ) . '">Supprimer</a>' 
+      $form ['fields'] ['custom_extrafield_' . $element->eid] ['settings_summary'] = array(
+          '#markup' => '<a href="' . url ( 'admin/config/custom-extrafield/' . $element->eid, array(
+              'query' => array(
+                  'destination' => current_path ()
+              )
+          ) ) . '">Modifier</a> | <a href="' . url ( 'admin/config/custom-extrafield/' . $element->eid . '/delete', array(
+              'query' => array(
+                  'destination' => current_path ()
+              )
+          ) ) . '">Supprimer</a>'
       );
     }
   }
@@ -317,25 +317,25 @@ function custom_extrafield_form_submit($form, $form_state) {
       }
     }
     drupal_write_record ( 'custom_extrafield', $extra );
-    drupal_set_message ( t ( 'Votre extrafield "@name" a été créé', array( 
-        '@name' => $extra->name 
+    drupal_set_message ( t ( 'Votre extrafield "@name" a été créé', array(
+        '@name' => $extra->name
     ) ) );
     $view_mode = $values ['view_mode'];
     $entity_type = $values ['entity_type'];
     $bundle = $values ['bundle'];
     $settings = field_bundle_settings ( $entity_type, $bundle );
     $entity_info = entity_get_info ( $entity_type );
-    $bundle_settings = array( 
-        'extra_fields' => array( 
-            'display' => array( 
-                'custom_extrafield_' . $extra->eid => array() 
-            ) 
-        ) 
+    $bundle_settings = array(
+        'extra_fields' => array(
+            'display' => array(
+                'custom_extrafield_' . $extra->eid => array()
+            )
+        )
     );
     if (! empty ( $entity_info ['view modes'] )) {
-      $bundle_settings ['extra_fields'] ['display'] ['custom_extrafield_' . $extra->eid] ['default'] = array( 
+      $bundle_settings ['extra_fields'] ['display'] ['custom_extrafield_' . $extra->eid] ['default'] = array(
           'weight' => 0,
-          'visible' => FALSE 
+          'visible' => FALSE
       );
       $bundle_settings ['extra_fields'] ['display'] ['custom_extrafield_' . $extra->eid] [$view_mode] = array(
           'weight' => 0,
@@ -359,11 +359,11 @@ function custom_extrafield_field_extra_fields() {
     foreach ( $extras as $key => $element ) {
       $object_vars = get_object_vars ( $element );
       unset ( $object_vars ['name'], $object_vars ['data'], $object_vars ['eid'] );
-      $extra [$element->entity_type] [$element->bundle] ['display'] ['custom_extrafield_' . $element->eid] = array( 
+      $extra [$element->entity_type] [$element->bundle] ['display'] ['custom_extrafield_' . $element->eid] = array(
           'label' => $element->name . ' ' . t ( '(Générer par Custom extrafield)' ),
           'description' => unserialize ( $element->data ),
           'weight' => 0,
-          'id' => $element->eid 
+          'id' => $element->eid
       );
       foreach ( $object_vars as $key => $value ) {
         $extra [$element->entity_type] [$element->bundle] ['display'] ['custom_extrafield_' . $element->eid] [$key] = $value;
@@ -384,9 +384,9 @@ function custom_extrafield_entity_view($entity, $type, $view_mode, $langcode) {
     if (preg_match ( '/^custom_extrafield_/', $key )) {
       if ($info_extra_field [$key] ['display'] [$view_mode] ['visible']) {
         if (empty ( $extrafield ['is_php'] )) {
-          $content = token_replace ( t ( $extrafield ['description'] ), array( 
+          $content = token_replace ( t ( $extrafield ['description'] ), array(
               'user' => $user,
-              $type => $entity 
+              $type => $entity
           ) );
         }
         else {
@@ -397,9 +397,9 @@ function custom_extrafield_entity_view($entity, $type, $view_mode, $langcode) {
         $tag = $extrafield ['tag'];
         $class = $extrafield ['class'];
         $markup = '<' . $tag . ' class="' . $key . ' ' . $class . '">' . $content . '</' . $tag . '>';
-        $entity->content [$key] = array( 
+        $entity->content [$key] = array(
             '#markup' => $markup,
-            '#weight' => $info_extra_field [$key] ['display'] [$view_mode] ['weight'] 
+            '#weight' => $info_extra_field [$key] ['display'] [$view_mode] ['weight']
         );
       }
     }
