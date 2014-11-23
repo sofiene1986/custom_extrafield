@@ -378,7 +378,16 @@ function custom_extrafield_field_extra_fields() {
  */
 function custom_extrafield_entity_view($entity, $type, $view_mode, $langcode) {
   global $user;
-  $bundle = ($type == 'user') ? 'user' : $entity->type;
+  dsm($entity);
+  if($type == 'user'){
+    $bundle = 'user';
+  }
+  elseif(isset($entity->type)){
+    $bundle = $entity->type;
+  }
+  else{
+    return ;
+  }
   $info_extra_field = field_info_extra_fields ( $type, $bundle, 'display' );
   foreach ( $info_extra_field as $key => $extrafield ) {
     if (preg_match ( '/^custom_extrafield_/', $key )) {
